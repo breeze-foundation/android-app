@@ -1,0 +1,7 @@
+{
+  "name": "tmac-android",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
