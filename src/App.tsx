@@ -10,10 +10,13 @@ import {
   setupIonicReact
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { ellipse, square, triangle } from 'ionicons/icons';
-import Tab1 from './pages/Tab1';
-import Tab2 from './pages/Tab2';
-import Tab3 from './pages/Tab3';
+import {  notificationsOutline, walletOutline, personOutline, readerOutline, analyticsOutline, ellipsisHorizontal, ellipsisHorizontalOutline, ellipsisHorizontalCircleOutline } from 'ionicons/icons';
+import Feed from './pages/Feed';
+import Notifications from './pages/Notifications';
+import Wallet from './pages/Wallet';
+import Trends from './pages/Trends';
+import Profile from './pages/Profile';
+import More from './pages/More';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -41,31 +44,46 @@ const App: React.FC = () => (
     <IonReactRouter>
       <IonTabs>
         <IonRouterOutlet>
-          <Route exact path="/tab1">
-            <Tab1 />
+          <Route exact path="/feed">
+            <Feed />
           </Route>
-          <Route exact path="/tab2">
-            <Tab2 />
+          <Route exact path="/notifications">
+            <Notifications />
           </Route>
-          <Route path="/tab3">
-            <Tab3 />
+          <Route path="/wallet">
+            <Wallet />
+          </Route>
+          <Route path="/profile">
+            <Wallet />
+          </Route>
+          <Route path="/trends">
+            <Trends />
+          </Route>
+          <Route path="/more">
+            <More />
           </Route>
           <Route exact path="/">
-            <Redirect to="/tab1" />
+            <Redirect to="/feed" />
           </Route>
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/tab1">
-            <IonIcon icon={triangle} />
-            <IonLabel>Tab 1</IonLabel>
+          <IonTabButton tab="tab1" href="/feed">
+            <IonIcon icon={readerOutline} />
           </IonTabButton>
-          <IonTabButton tab="tab2" href="/tab2">
-            <IonIcon icon={ellipse} />
-            <IonLabel>Tab 2</IonLabel>
+          <IonTabButton tab="tab2" href="/notifications">
+            <IonIcon icon={notificationsOutline} />
           </IonTabButton>
-          <IonTabButton tab="tab3" href="/tab3">
-            <IonIcon icon={square} />
-            <IonLabel>Tab 3</IonLabel>
+          <IonTabButton tab="tab3" href="/wallet">
+            <IonIcon icon={walletOutline} />
+          </IonTabButton>
+          <IonTabButton tab="tab4" href="/profile">
+            <IonIcon icon={personOutline} />
+          </IonTabButton>
+          <IonTabButton tab="tab5" href="/trends">
+            <IonIcon icon={analyticsOutline} />
+          </IonTabButton>
+          <IonTabButton tab="tab6" href="/more">
+            <IonIcon icon={ellipsisHorizontalCircleOutline} />
           </IonTabButton>
         </IonTabBar>
       </IonTabs>
