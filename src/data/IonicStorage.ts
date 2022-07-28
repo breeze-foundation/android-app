@@ -16,7 +16,11 @@ export const createStore = (name = "_tmac") => {
 
 export const set = (key:string, val: any) => {
 
-    storage.set(key, val);
+    try{
+        storage.set(key, val);
+    } catch {
+        console.log('error in storage', storage);
+    }
 }
 
 export const get = async (key: string) => {
@@ -26,8 +30,11 @@ export const get = async (key: string) => {
 }
 
 export const remove = async (key: string) => {
-
-    await storage.remove(key);
+    try{
+        await storage.remove(key);
+    } catch {
+        console.log('key not found', key);
+    }
 }
 
 export const clear = async () => {

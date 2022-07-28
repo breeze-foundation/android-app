@@ -7,7 +7,7 @@ import { checkLoginStatus, logoutUser } from '../data/IonicStorage';
 
 
 interface moreProps {
-    setLoginStatusGlobal?: any
+  setLoginStatusGlobal?: any
 }
 
 const More: React.FC<moreProps> = (props: moreProps) => {
@@ -21,15 +21,15 @@ const More: React.FC<moreProps> = (props: moreProps) => {
   useEffect(() => {
 
     const checkLogin = async () => {
+      if(userLoggedIn === true) return
       const status = await checkLoginStatus()
-      if(status){
+      if (status) {
+        setLoginStatusGlobal(true)
         setUserLoggedInStatus(status);
       }
     }
-
-    if (!userLoggedIn) checkLogin()
-
-  }, [userLoggedIn])
+    checkLogin();
+  })
 
   const handleLogOut = async () => {
     await logoutUser();
@@ -56,18 +56,18 @@ const More: React.FC<moreProps> = (props: moreProps) => {
             <IonLabel>Display</IonLabel>
           </IonItem>
         </IonList>
-        {!userLoggedIn ? (
-          <div className="ion-text-center">
-            <IonButton routerLink="/login">
-              <IonIcon icon={logIn}></IonIcon>
-              <IonLabel>Login</IonLabel>
-            </IonButton>
-          </div>
-        ) : (
+        {userLoggedIn ? (
           <div className="ion-text-center">
             <IonButton onClick={() => handleLogOut()} color="danger">
               <IonIcon icon={logOut}></IonIcon>
               <IonLabel>Logout</IonLabel>
+            </IonButton>
+          </div>
+        ) : (
+          <div className="ion-text-center">
+            <IonButton routerLink="/login">
+              <IonIcon icon={logIn}></IonIcon>
+              <IonLabel>Login</IonLabel>
             </IonButton>
           </div>
         )}

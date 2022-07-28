@@ -10,7 +10,7 @@ var CryptoJS = require("crypto-js");
 
 declare const window: any;
 const breej: any = window.breej!;
-breej.init({api: process.env.API_URL})
+breej.init({api: process.env.API_URL || 'https://api.breezechain.org' })
 
 interface LoginPageProps {
     setLoginStatusGlobal?: any

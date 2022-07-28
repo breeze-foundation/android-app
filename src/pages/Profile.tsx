@@ -1,4 +1,4 @@
-import { IonAvatar, IonCol, IonContent, IonGrid, IonIcon, IonItem, IonItemDivider, IonLabel, IonLoading, IonPage, IonRow, IonSegment, IonSegmentButton, IonText, IonTitle } from '@ionic/react';
+import { IonAvatar, IonCol, IonContent, IonGrid, IonIcon, IonItem, IonItemDivider, IonLabel, IonLoading, IonPage, IonRow, IonSegment, IonSegmentButton, IonText, IonTitle, useIonLoading } from '@ionic/react';
 import { useEffect, useState } from 'react';
 import AppHeader from '../components/AppHeader';
 
@@ -13,7 +13,7 @@ import PostDetail from './elements/PostDetail';
 
 declare const window: any;
 const breej: any = window.breej!;
-const API = process.env.API_URL;
+const API = process.env.API_URL || 'https://api.breezechain.org';
 breej.init({ api: API })
 
 const Profile: React.FC = () => {
@@ -26,6 +26,8 @@ const Profile: React.FC = () => {
   const [likedContentLoaded, setLikedContentLoaded] = useState(false);
   const [blogContentLoaded, setBlogContentLoaded] = useState(false);
 
+  const [segmentLoaderPresent] = useIonLoading();
+
   useEffect(() => {
     const loadAccount = async () => {
       const username = await getUserName();
@@ -33,10 +35,10 @@ const Profile: React.FC = () => {
         breej.getAccount(username, function (error: any, account: Account) {
           console.log('get account', account);
           if (account) {
-            if(!likedContent || likedContent.length === 0) {
+            if(!likedContent || (likedContent && likedContent.length === 0)) {
               loadLikedContent(account.name!);
             }
-            if(!blogContent || blogContent.length === 0) {
+            if(!blogContent || (blogContent && blogContent.length === 0)) {
               loadBlogContent(account.name!);
             }
             setCurrentAccount(account);
@@ -76,6 +78,13 @@ const Profile: React.FC = () => {
   }
 
   const handleSegmentChange = (segment: string) => {
+    let message = '';
+    if(segment === 'posts') {
+      message = 'Loading posts...';
+    } else if(segment === 'likes') {
+      message = 'Loading likes...'
+    }
+    segmentLoaderPresent({message, duration:500, spinner:'circles'});
     setSelectedSegment(segment)
   }
 
