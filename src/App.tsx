@@ -9,7 +9,7 @@ import {
   setupIonicReact
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import {  notificationsOutline, walletOutline, personOutline, readerOutline, analyticsOutline, ellipsisHorizontal, ellipsisHorizontalOutline, ellipsisHorizontalCircleOutline } from 'ionicons/icons';
+import { notificationsOutline, walletOutline, personOutline, readerOutline, analyticsOutline, ellipsisHorizontalCircleOutline } from 'ionicons/icons';
 import Feed from './pages/Feed';
 import Notifications from './pages/Notifications';
 import Wallet from './pages/Wallet';
@@ -35,59 +35,92 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import { useEffect, useState } from 'react';
+import { checkLoginStatus } from './data/IonicStorage';
+import SignUpPage from './pages/SignUp';
+import LoginPage from './pages/LoginPage';
 
 setupIonicReact();
 
-const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonTabs>
-        <IonRouterOutlet>
-          <Route exact path="/feed">
-            <Feed />
-          </Route>
-          <Route exact path="/notifications">
-            <Notifications />
-          </Route>
-          <Route path="/wallet">
-            <Wallet />
-          </Route>
-          <Route path="/profile">
-            <Wallet />
-          </Route>
-          <Route path="/trends">
-            <Trends />
-          </Route>
-          <Route path="/more">
-            <More />
-          </Route>
-          <Route exact path="/">
-            <Redirect to="/feed" />
-          </Route>
-        </IonRouterOutlet>
-        <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/feed">
-            <IonIcon icon={readerOutline} />
-          </IonTabButton>
-          <IonTabButton tab="tab2" href="/notifications">
-            <IonIcon icon={notificationsOutline} />
-          </IonTabButton>
-          <IonTabButton tab="tab3" href="/wallet">
-            <IonIcon icon={walletOutline} />
-          </IonTabButton>
-          <IonTabButton tab="tab4" href="/profile">
-            <IonIcon icon={personOutline} />
-          </IonTabButton>
-          <IonTabButton tab="tab5" href="/trends">
-            <IonIcon icon={analyticsOutline} />
-          </IonTabButton>
-          <IonTabButton tab="tab6" href="/more">
-            <IonIcon icon={ellipsisHorizontalCircleOutline} />
-          </IonTabButton>
-        </IonTabBar>
-      </IonTabs>
-    </IonReactRouter>
-  </IonApp>
-);
+const App: React.FC = () => {
+
+  const [userLoggedIn, setUserLoggedInStatus] = useState(false);
+
+  useEffect(() => {
+
+    const checkLogin = async () => {
+      const status = await checkLoginStatus()
+      setUserLoggedInStatus(status);
+    }
+
+    if(!userLoggedIn) checkLogin()
+
+  }, [userLoggedIn])
+
+  return (
+    <IonApp>
+      <IonReactRouter>
+        <IonTabs>
+          <IonRouterOutlet>
+            <Route exact path="/feed">
+              <Feed />
+            </Route>
+            <Route exact path="/notifications">
+              <Notifications />
+            </Route>
+            <Route path="/wallet">
+              <Wallet />
+            </Route>
+            <Route path="/profile">
+              <Profile />
+            </Route>
+            <Route path="/trends">
+              <Trends />
+            </Route>
+            <Route path="/more">
+              <More setLoginStatusGlobal={setUserLoggedInStatus}/>
+            </Route>
+            <Route path="/login">
+              <LoginPage setLoginStatusGlobal={setUserLoggedInStatus} />
+            </Route>
+            <Route path="/signup">
+              <SignUpPage />
+            </Route>
+            <Route exact path="/">
+              <Redirect to="/feed" />
+            </Route>
+
+          </IonRouterOutlet>
+          <IonTabBar slot="bottom">
+            <IonTabButton tab="tab1" href="/feed">
+              <IonIcon icon={readerOutline} />
+            </IonTabButton>
+            {userLoggedIn ? (
+              <IonTabButton tab="tab2" href="/notifications">
+                <IonIcon icon={notificationsOutline} />
+              </IonTabButton>
+            ) : null}
+            {userLoggedIn ? (
+              <IonTabButton tab="tab3" href="/wallet">
+                <IonIcon icon={walletOutline} />
+              </IonTabButton>
+            ) : null}
+            {userLoggedIn ? (
+              <IonTabButton tab="tab4" href="/profile">
+                <IonIcon icon={personOutline} />
+              </IonTabButton>
+            ) : null}
+            <IonTabButton tab="tab5" href="/trends">
+              <IonIcon icon={analyticsOutline} />
+            </IonTabButton>
+            <IonTabButton tab="tab6" href="/more">
+              <IonIcon icon={ellipsisHorizontalCircleOutline} />
+            </IonTabButton>
+          </IonTabBar>
+        </IonTabs>
+      </IonReactRouter>
+    </IonApp>
+  );
+}
 
 export default App;

@@ -1,4 +1,4 @@
-import { IonCol, IonHeader, IonRow, IonTitle, IonToolbar } from "@ionic/react";
+import { IonHeader, IonToolbar } from "@ionic/react";
 import "./AppHeader.css";
 import logo from "../images/logo-main.png";
 import compose from "../images/icons/compose.png";
