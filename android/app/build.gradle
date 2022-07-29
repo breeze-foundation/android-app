@@ -1,9 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
+    namespace 'com.tmac.android'
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "io.ionic.starter"
+        applicationId "com.tmac.android"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
