@@ -1,4 +1,4 @@
-import { IonAvatar, IonCol, IonContent, IonGrid, IonIcon, IonItem, IonItemDivider, IonLabel, IonLoading, IonPage, IonRow, IonSegment, IonSegmentButton, IonText, IonTitle, useIonLoading } from '@ionic/react';
+import { IonAvatar, IonCol, IonContent, IonGrid, IonIcon, IonImg, IonItem, IonItemDivider, IonLabel, IonLoading, IonPage, IonRow, IonSegment, IonSegmentButton, IonText, IonTitle, useIonLoading } from '@ionic/react';
 import { useEffect, useState } from 'react';
 import AppHeader from '../components/AppHeader';
 
@@ -22,6 +22,8 @@ const Profile: React.FC = () => {
   const [selectedSegment, setSelectedSegment] = useState('posts');
 
   const [likedContent, setLikedContent] = useState<any>([]);
+  const [likedContentUsers, setLikedContentUsers] = useState<any[]>([]);
+
   const [blogContent, setBlogContent] = useState<any>([]);
   const [likedContentLoaded, setLikedContentLoaded] = useState(false);
   const [blogContentLoaded, setBlogContentLoaded] = useState(false);
@@ -33,12 +35,11 @@ const Profile: React.FC = () => {
       const username = await getUserName();
       if (username) {
         breej.getAccount(username, function (error: any, account: Account) {
-          console.log('get account', account);
           if (account) {
-            if(!likedContent || (likedContent && likedContent.length === 0)) {
+            if (!likedContent || (likedContent && likedContent.length === 0)) {
               loadLikedContent(account.name!);
             }
-            if(!blogContent || (blogContent && blogContent.length === 0)) {
+            if (!blogContent || (blogContent && blogContent.length === 0)) {
               loadBlogContent(account.name!);
             }
             setCurrentAccount(account);
@@ -48,9 +49,18 @@ const Profile: React.FC = () => {
     }
 
     const loadLikedContent = async (username: string) => {
-      let likesAPI = await axios.get(`${API}/votes/${username}`);
+      const likesAPI = await axios.get(`${API}/votes/${username}`);
       if (likesAPI.status === 200) {
-        setLikedContent(likesAPI.data);
+        const userApiPromises: any[] = [];
+        likesAPI.data.forEach((likedData: any) => {
+          const userLAPI = axios.get(API + `/account/${likedData.author}`);
+          userApiPromises.push(userLAPI);
+          setLikedContent(likesAPI.data);
+          loadLikedContentUsers(userApiPromises);
+        })
+      } else {
+        setLikedContentUsers([]);
+        setLikedContent([]);
         setLikedContentLoaded(true);
       }
     }
@@ -61,6 +71,22 @@ const Profile: React.FC = () => {
         setBlogContent(blogAPI.data);
         setBlogContentLoaded(true);
       }
+    }
+
+    const loadLikedContentUsers = (userApiPromises: any[]) => {
+      Promise.all(userApiPromises)
+        .then((users: any[]) => {
+          const usersData: any[] = [];
+          users.forEach((user: any) => {
+            if (user.data) usersData.push(user.data);
+          })
+          setLikedContentUsers(usersData);
+          setLikedContentLoaded(true);
+        })
+        .catch((err: any) => {
+          console.log('error while loading users')
+          setLikedContentLoaded(true);
+        })
     }
 
     if (!currentAccount.name) loadAccount();
@@ -79,12 +105,12 @@ const Profile: React.FC = () => {
 
   const handleSegmentChange = (segment: string) => {
     let message = '';
-    if(segment === 'posts') {
+    if (segment === 'posts') {
       message = 'Loading posts...';
-    } else if(segment === 'likes') {
+    } else if (segment === 'likes') {
       message = 'Loading likes...'
     }
-    segmentLoaderPresent({message, duration:500, spinner:'circles'});
+    segmentLoaderPresent({ message, duration: 500, spinner: 'circles' });
     setSelectedSegment(segment)
   }
 
@@ -93,11 +119,13 @@ const Profile: React.FC = () => {
       <AppHeader />
       <IonContent fullscreen>
         {currentAccount.name ? (
-          <IonGrid>
-            <IonRow>
+          <IonGrid style={{paddingTop: '0', marginTop: '-1.2rem'}}>
+            <IonRow style={{margin: '1rem -1rem -2rem'}}>
               <IonCol>
-                <IonAvatar className='ion-content-padding'>
-                  <img alt="author pic" src={currentAccount.json.profile.avatar} />
+                <IonImg src={currentAccount.json.profile.cover_image ? currentAccount.json.profile.cover_image: 
+                 'https://i.imgur.com/CAFy1oY.jpg'} />
+                <IonAvatar class='ion-no-padding'>
+                   <img style={{margin: '-2rem 2rem 1rem'}} alt="author pic" src={currentAccount.json.profile.avatar} />
                 </IonAvatar>
               </IonCol>
             </IonRow>
@@ -130,6 +158,14 @@ const Profile: React.FC = () => {
                   <IonIcon icon={globeOutline} /> {currentAccount.json.profile.website}</IonText>
               </IonCol>
             </IonRow>
+            <IonRow>
+              <IonCol>
+                  <IonText className="ion-padding">
+                    <b>{currentAccount.follows!.length || 0}</b> &nbsp;Following &nbsp;
+                    <b>{currentAccount.followers!.length || 0}</b> &nbsp;Followers
+                  </IonText>
+              </IonCol>
+            </IonRow>
             <IonItemDivider></IonItemDivider>
             {likedContentLoaded && blogContentLoaded ? (
               <IonSegment onIonChange={(e) => handleSegmentChange(e.detail.value!)} value={selectedSegment}>
@@ -144,7 +180,7 @@ const Profile: React.FC = () => {
             {selectedSegment === 'posts' && (
               <IonRow>
                 {blogContentLoaded && blogContent.map((content: Content, index: number) => {
-                  return <IonCol key={content._id || ('bc' + index)} size="12"><PostDetail content={content} /></IonCol>
+                  return <IonCol key={content._id || ('bc' + index)} size="12"><PostDetail account={currentAccount} content={content} /></IonCol>
                 })}
               </IonRow>
             )}
@@ -152,7 +188,8 @@ const Profile: React.FC = () => {
             {selectedSegment === 'likes' && (
               <IonRow>
                 {likedContentLoaded && likedContent.map((content: Content, index: number) => {
-                  return <IonCol key={content._id || ('lc' + index)} size="12"><PostDetail content={content} /></IonCol>
+                  return <IonCol key={content._id || ('lc' + index)} size="12"><PostDetail
+                    author={likedContentUsers.find((author: any) => author.name === content.author)} content={content} /></IonCol>
                 })}
               </IonRow>
             )}
