@@ -19,4 +19,5 @@ export interface Account {
     pub_witness?: string
     unread?: number;
     error?: any;
+    follows?: string[];
 }

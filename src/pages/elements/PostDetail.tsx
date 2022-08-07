@@ -1,10 +1,23 @@
-import { IonCard, IonCardHeader, IonRow, IonCol, IonItem, IonAvatar, IonImg, IonLabel, IonCardTitle, IonCardContent, IonText, IonButton, IonIcon } from "@ionic/react";
-import { heartOutline, walletOutline } from "ionicons/icons";
+import { IonCard, IonCardHeader, IonRow, IonCol, IonItem, IonAvatar, IonImg, IonLabel, IonCardTitle, IonCardContent, IonText, IonButton, IonIcon, IonChip } from "@ionic/react";
+import { heart, heartOutline, person, time, walletOutline } from "ionicons/icons";
 import moment from "moment";
 import { PostDetailProp } from "../../model";
+import './PostDetail.css';
 
 const PostDetail: React.FC<PostDetailProp> = (prop: PostDetailProp) => {
-    const content = prop.content;
+
+    const { content, author, account } = prop;
+
+    let profileImageSrc = '';
+    if(author) {
+        if(author.json && author.json.profile && author.json.profile.avatar) {
+            profileImageSrc = author.json.profile.avatar;
+        }
+    } else if(account) {
+        if(account.json && account.json.profile && account.json.profile.avatar) {
+            profileImageSrc = account.json.profile.avatar;
+        }
+    }
 
     return (
         <IonCard>
@@ -13,13 +26,22 @@ const PostDetail: React.FC<PostDetailProp> = (prop: PostDetailProp) => {
                     <IonCol>
                         <IonItem>
                             <IonAvatar slot="start">
-                                <IonImg src="https://img.blurt.world/blurtimage/tekraze/2028f5f3f20e0f18ce4c7daf10cb154c4bd85094.png" />
+                                {profileImageSrc.length > 0 ? (
+                                    <IonImg src={profileImageSrc} />
+                                ): (
+                                    <IonIcon icon={person} />
+                                )}
                             </IonAvatar>
-                            <IonLabel><b>@{content.author}</b> in <b>{content.json.category} <span>.</span> {moment.utc(content.ts).fromNow()} </b></IonLabel>
+                            <IonText><b>@{content.author}</b> in <b className="category-color ion-text-primary ion-text-uppercase">{content.json.category}</b> <br/> 
+                                <IonChip outline color="primary">
+                                    <IonIcon icon={time}></IonIcon>
+                                    <IonLabel>{moment.utc(content.ts).fromNow()}</IonLabel>
+                                </IonChip>
+                            </IonText>
                         </IonItem>
                     </IonCol>
                 </IonRow>
-                <IonRow class='ion-padding'>
+                <IonRow>
                     <IonCol size="12">
                         <IonCardTitle>{content.json.title}</IonCardTitle>
                     </IonCol>
@@ -28,19 +50,22 @@ const PostDetail: React.FC<PostDetailProp> = (prop: PostDetailProp) => {
             <IonCardContent>
                 <IonRow>
                     <IonCol>
-                        <IonText>
-                            <div dangerouslySetInnerHTML={{ __html: content.json.body! }} /></IonText>
+                        <IonLabel>
+                            <div dangerouslySetInnerHTML={{ __html: content.json.body! }} /></IonLabel>
                         {content.json && content.json.image && (
                             <IonImg src={content.json.image} />
                         )}</IonCol>
                 </IonRow>
                 <IonRow>
                     <IonCol>
-                        <IonButton><IonIcon icon={heartOutline} /> &nbsp;{content.likes}</IonButton>
+                        <IonButton>
+                            <IonIcon slot="icon-only" icon={content.likes! > 0 ? heart : heartOutline} 
+                            color={content.likes! > 0 ? 'danger' : 'medium'} /> &nbsp;{content.likes}
+                        </IonButton>
                     </IonCol>
                     <IonCol>
                         <IonButton>
-                            <IonIcon icon={walletOutline} /> &nbsp;{content.dist ? (content.dist / 1000000) : 0} TMAC
+                            <IonIcon slot="icon-only" icon={walletOutline} /> &nbsp;{content.dist ? (content.dist / 1000000) : 0} TMAC
                         </IonButton>
                     </IonCol>
                 </IonRow>

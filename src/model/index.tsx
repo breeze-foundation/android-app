@@ -1,3 +1,5 @@
+import { Account } from "./Account";
+
 export interface Content {
     author?: string;
     contentTs?: number;
@@ -21,5 +23,7 @@ export interface jsonObject {
 }
 
 export interface PostDetailProp {
-    content: Content
+    content: Content,
+    author?: any,
+    account?: Account
 }
