@@ -2,6 +2,7 @@ import { IonCard, IonCardHeader, IonRow, IonCol, IonItem, IonAvatar, IonImg, Ion
 import { heart, heartOutline, person, time, walletOutline } from "ionicons/icons";
 import moment from "moment";
 import { PostDetailProp } from "../../model";
+import './PostDetail.css';
 
 const PostDetail: React.FC<PostDetailProp> = (prop: PostDetailProp) => {
 
@@ -31,7 +32,7 @@ const PostDetail: React.FC<PostDetailProp> = (prop: PostDetailProp) => {
                                     <IonIcon icon={person} />
                                 )}
                             </IonAvatar>
-                            <IonText><b>@{content.author}</b> in <b>{content.json.category}</b> <br/> 
+                            <IonText><b>@{content.author}</b> in <b className="category-color ion-text-primary ion-text-uppercase">{content.json.category}</b> <br/> 
                                 <IonChip outline color="primary">
                                     <IonIcon icon={time}></IonIcon>
                                     <IonLabel>{moment.utc(content.ts).fromNow()}</IonLabel>

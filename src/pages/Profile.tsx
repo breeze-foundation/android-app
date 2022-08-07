@@ -137,25 +137,23 @@ const Profile: React.FC = () => {
             <IonRow>
               <IonCol>
                 <IonText className="ion-padding">
-                  <IonIcon icon={walletOutline} /> {currentAccount.balance! / 1000000}TMAC &nbsp;
-                  <IonIcon icon={flashOutline} /> {currentAccount.bw.v / 4}VP &nbsp;
-                  <IonIcon icon={flashOutline} /> {currentAccount.bw.v}BW
+                  <IonIcon color="primary" icon={walletOutline} /> {currentAccount.balance! / 1000000}TMAC &nbsp;
+                  <IonIcon color="primary" icon={flashOutline} /> {currentAccount.bw.v / 4}VP &nbsp;
+                  <IonIcon color="primary" icon={flashOutline} /> {currentAccount.bw.v}BW
                 </IonText>
               </IonCol>
             </IonRow>
             <IonRow>
               <IonCol>
-                <IonItem lines="none">
-                  <IonLabel>{currentAccount.json.profile.about}</IonLabel>
-                </IonItem>
+                  <IonText className="ion-padding">{currentAccount.json.profile.about}</IonText>
               </IonCol>
             </IonRow>
             <IonRow>
               <IonCol>
                 <IonText className="ion-padding">
-                  <IonIcon icon={locationOutline} />{currentAccount.json.profile.location} &nbsp;
-                  <IonIcon icon={calendarOutline} /> {formattedCreatedDate(currentAccount.created.ts)} &nbsp;
-                  <IonIcon icon={globeOutline} /> {currentAccount.json.profile.website}</IonText>
+                  <IonIcon color="medium" icon={locationOutline} />{currentAccount.json.profile.location} &nbsp;
+                  <IonIcon color="medium" icon={calendarOutline} /> {formattedCreatedDate(currentAccount.created.ts)} &nbsp;
+                  <IonIcon color="medium" icon={globeOutline} /> {currentAccount.json.profile.website}</IonText>
               </IonCol>
             </IonRow>
             <IonRow>
