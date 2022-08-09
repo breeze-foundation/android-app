@@ -1,4 +1,4 @@
-import { IonAvatar, IonCol, IonContent, IonGrid, IonIcon, IonImg, IonItem, IonItemDivider, IonLabel, IonLoading, IonPage, IonRow, IonSegment, IonSegmentButton, IonText, IonTitle, useIonLoading } from '@ionic/react';
+import { IonAvatar, IonCol, IonContent, IonGrid, IonIcon, IonImg, IonItemDivider, IonLoading, IonPage, IonRow, IonSegment, IonSegmentButton, IonText, IonTitle, useIonLoading } from '@ionic/react';
 import { useEffect, useState } from 'react';
 import AppHeader from '../components/AppHeader';
 
@@ -16,33 +16,49 @@ const breej: any = window.breej!;
 const API = process.env.API_URL || 'https://api.breezechain.org';
 breej.init({ api: API })
 
-const Profile: React.FC = () => {
+interface profileProps {
+  // setLoginStatusGlobal?: any
+  globalLoginStatus?: boolean
+}
 
-  const [currentAccount, setCurrentAccount] = useState<Account>({});
-  const [selectedSegment, setSelectedSegment] = useState('posts');
-
-  const [likedContent, setLikedContent] = useState<any>([]);
-  const [likedContentUsers, setLikedContentUsers] = useState<any[]>([]);
-
-  const [blogContent, setBlogContent] = useState<any>([]);
-  const [likedContentLoaded, setLikedContentLoaded] = useState(false);
-  const [blogContentLoaded, setBlogContentLoaded] = useState(false);
+const Profile: React.FC<profileProps> = (props: profileProps) => {
 
   const [segmentLoaderPresent] = useIonLoading();
 
+  const blogContentStateObject: any = {
+    content: undefined,
+    contentLoaded: false
+  }
+
+  const likedContentStateObject: any = {
+    content: undefined,
+    contentLoaded: false,
+    contentUsers: undefined
+  }
+
+  const [currentState, setCurrentState] = useState<any>({
+    currentAccount: undefined,
+    selectedSegment: 'posts',
+    blogContentState: blogContentStateObject,
+    likedContentState: likedContentStateObject
+  });
+
   useEffect(() => {
+
+    // need to add account refresh/update hook
+
     const loadAccount = async () => {
       const username = await getUserName();
-      if (username) {
-        breej.getAccount(username, function (error: any, account: Account) {
+
+      // Update only if we dont have account or account is changed
+      if ((!currentState.currentAccount && username) || (currentState.currentAccount && currentState.currentAccount.name !== username)) {
+        breej.getAccount(username, async function (error: any, account: Account) {
           if (account) {
-            if (!likedContent || (likedContent && likedContent.length === 0)) {
-              loadLikedContent(account.name!);
-            }
-            if (!blogContent || (blogContent && blogContent.length === 0)) {
-              loadBlogContent(account.name!);
-            }
-            setCurrentAccount(account);
+            let blogContentStateData = {};
+            let likedContentStateData = {};
+            likedContentStateData = await loadLikedContent(account.name!);
+            blogContentStateData = await loadBlogContent(account.name!);
+            setCurrentState({ ...currentState, currentAccount: account, blogContentState: blogContentStateData, likedContentState: likedContentStateData });
           }
         });
       }
@@ -52,46 +68,41 @@ const Profile: React.FC = () => {
       const likesAPI = await axios.get(`${API}/votes/${username}`);
       if (likesAPI.status === 200) {
         const userApiPromises: any[] = [];
-        likesAPI.data.forEach((likedData: any) => {
+        for (let likedData of likesAPI.data) {
           const userLAPI = axios.get(API + `/account/${likedData.author}`);
           userApiPromises.push(userLAPI);
-          setLikedContent(likesAPI.data);
-          loadLikedContentUsers(userApiPromises);
-        })
+        }
+        return await loadLikedContentUsers(likesAPI.data, userApiPromises);
       } else {
-        setLikedContentUsers([]);
-        setLikedContent([]);
-        setLikedContentLoaded(true);
+        return { content: [], contentUsers: [], contentLoaded: true };
       }
     }
 
     const loadBlogContent = async (username: string) => {
       let blogAPI = await axios.get(`${API}/blog/${username}`);
       if (blogAPI.status === 200) {
-        setBlogContent(blogAPI.data);
-        setBlogContentLoaded(true);
+        return { content: blogAPI.data, contentLoaded: true }
+      } else {
+        return { content: [], contentLoaded: true }
       }
     }
 
-    const loadLikedContentUsers = (userApiPromises: any[]) => {
-      Promise.all(userApiPromises)
-        .then((users: any[]) => {
-          const usersData: any[] = [];
-          users.forEach((user: any) => {
-            if (user.data) usersData.push(user.data);
-          })
-          setLikedContentUsers(usersData);
-          setLikedContentLoaded(true);
-        })
-        .catch((err: any) => {
-          console.log('error while loading users')
-          setLikedContentLoaded(true);
-        })
+    const loadLikedContentUsers = async (content: any, userApiPromises: any[]) => {
+      try {
+        const users = await Promise.all(userApiPromises);
+        const usersData: any[] = [];
+        for (let user of users) {
+          if (user.data) usersData.push(user.data);
+        }
+        return { content, contentUsers: usersData, contentLoaded: true };
+      } catch (err) {
+        console.log('error while loading users');
+        return { content, contentUsers: [], contentLoaded: true };
+      }
     }
 
-    if (!currentAccount.name) loadAccount();
-
-  }, [currentAccount, selectedSegment, likedContent, blogContent, blogContentLoaded, likedContentLoaded])
+    if(props.globalLoginStatus) loadAccount();
+  }, [currentState, props.globalLoginStatus]);
 
   const formattedCreatedDate = (dateTimeStamp: any) => {
     const monthNames = ["January", "February", "March", "April", "May", "June",
@@ -111,21 +122,23 @@ const Profile: React.FC = () => {
       message = 'Loading likes...'
     }
     segmentLoaderPresent({ message, duration: 500, spinner: 'circles' });
-    setSelectedSegment(segment)
+    setCurrentState({ ...currentState, selectedSegment: segment });
   }
+
+  const { currentAccount, selectedSegment, blogContentState, likedContentState } = currentState;
 
   return (
     <IonPage>
       <AppHeader />
       <IonContent fullscreen>
-        {currentAccount.name ? (
-          <IonGrid style={{paddingTop: '0', marginTop: '-1.2rem'}}>
-            <IonRow style={{margin: '1rem -1rem -2rem'}}>
+        {currentAccount && currentAccount.name ? (
+          <IonGrid style={{ paddingTop: '0', marginTop: '-1.2rem' }}>
+            <IonRow style={{ margin: '1rem -1rem -2rem' }}>
               <IonCol>
-                <IonImg src={currentAccount.json.profile.cover_image ? currentAccount.json.profile.cover_image: 
-                 'https://i.imgur.com/CAFy1oY.jpg'} />
+                <IonImg src={currentAccount.json.profile.cover_image ? currentAccount.json.profile.cover_image :
+                  'https://i.imgur.com/CAFy1oY.jpg'} />
                 <IonAvatar class='ion-no-padding'>
-                   <img style={{margin: '-2rem 2rem 1rem'}} alt="author pic" src={currentAccount.json.profile.avatar} />
+                  <img style={{ margin: '-2rem 2rem 1rem' }} alt="author pic" src={currentAccount.json.profile.avatar} />
                 </IonAvatar>
               </IonCol>
             </IonRow>
@@ -145,7 +158,7 @@ const Profile: React.FC = () => {
             </IonRow>
             <IonRow>
               <IonCol>
-                  <IonText className="ion-padding">{currentAccount.json.profile.about}</IonText>
+                <IonText className="ion-padding">{currentAccount.json.profile.about}</IonText>
               </IonCol>
             </IonRow>
             <IonRow>
@@ -158,45 +171,43 @@ const Profile: React.FC = () => {
             </IonRow>
             <IonRow>
               <IonCol>
-                  <IonText className="ion-padding">
-                    <b>{currentAccount.follows!.length || 0}</b> &nbsp;Following &nbsp;
-                    <b>{currentAccount.followers!.length || 0}</b> &nbsp;Followers
-                  </IonText>
+                <IonText className="ion-padding">
+                  <b>{currentAccount.follows!.length || 0}</b> &nbsp;Following &nbsp;
+                  <b>{currentAccount.followers!.length || 0}</b> &nbsp;Followers
+                </IonText>
               </IonCol>
             </IonRow>
             <IonItemDivider></IonItemDivider>
-            {likedContentLoaded && blogContentLoaded ? (
+            {likedContentState.contentLoaded && blogContentState.contentLoaded ? (
               <IonSegment onIonChange={(e) => handleSegmentChange(e.detail.value!)} value={selectedSegment}>
                 <IonSegmentButton value="posts">Posts</IonSegmentButton>
                 <IonSegmentButton value="likes">Likes</IonSegmentButton>
               </IonSegment>
             ) : (
               <IonLoading
-                isOpen={!likedContentLoaded || !blogContentLoaded}
+                isOpen={!likedContentState.contentLoaded || !blogContentState.contentLoaded}
               />
             )}
             {selectedSegment === 'posts' && (
               <IonRow>
-                {blogContentLoaded && blogContent.map((content: Content, index: number) => {
-                  return <IonCol key={content._id || ('bc' + index)} size="12"><PostDetail account={currentAccount} content={content} /></IonCol>
+                {blogContentState.contentLoaded && blogContentState.content.map((content: Content, index: number) => {
+                  return <IonCol key={('bc' + index)} size="12"><PostDetail ownContent username={currentAccount.name} account={currentAccount} content={content} /></IonCol>
                 })}
               </IonRow>
             )}
 
             {selectedSegment === 'likes' && (
               <IonRow>
-                {likedContentLoaded && likedContent.map((content: Content, index: number) => {
-                  return <IonCol key={content._id || ('lc' + index)} size="12"><PostDetail
-                    author={likedContentUsers.find((author: any) => author.name === content.author)} content={content} /></IonCol>
+                {likedContentState.contentLoaded && likedContentState.content.map((content: Content, index: number) => {
+                  return <IonCol key={('lc' + index)} size="12"><PostDetail likedContent account={currentAccount} username={currentAccount.name}
+                    author={likedContentState.contentUsers.find((author: any) => author.name === content.author)} content={content} /></IonCol>
                 })}
               </IonRow>
             )}
           </IonGrid>
         ) : (
           <IonLoading
-            // cssClass='my-custom-class'
             isOpen={!currentAccount}
-            // onDidDismiss={() => setShowLoading(false)}
             message={'Please wait...'}
             duration={5000}
           />

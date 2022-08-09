@@ -39,6 +39,7 @@ import { useEffect, useState } from 'react';
 import { checkLoginStatus } from './data/IonicStorage';
 import SignUpPage from './pages/SignUp';
 import LoginPage from './pages/LoginPage';
+import SinglePostPage from './pages/SinglePost';
 
 setupIonicReact();
 
@@ -72,19 +73,22 @@ const App: React.FC = () => {
               <Wallet />
             </Route>
             <Route path="/profile">
-              <Profile />
+              <Profile globalLoginStatus={userLoggedIn} />
             </Route>
             <Route path="/trends">
               <Trends />
             </Route>
             <Route path="/more">
-              <More setLoginStatusGlobal={setUserLoggedInStatus}/>
+              <More setLoginStatusGlobal={setUserLoggedInStatus} />
             </Route>
             <Route path="/login">
               <LoginPage setLoginStatusGlobal={setUserLoggedInStatus} />
             </Route>
             <Route path="/signup">
               <SignUpPage />
+            </Route>
+            <Route path="/singlepost">
+              <SinglePostPage />
             </Route>
             <Route exact path="/">
               <Redirect to="/feed" />
