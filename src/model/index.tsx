@@ -12,6 +12,9 @@ export interface Content {
     dist?: number;
     pa?: any;
     pp?: any;
+    __promoted?: boolean
+    user?: Account
+    votes?: any[]
 }
 
 export interface jsonObject {
@@ -20,10 +23,15 @@ export interface jsonObject {
     body?: string;
     category?: string;
     type?: number;
+    tags?: string[]
 }
 
 export interface PostDetailProp {
-    content: Content,
-    author?: any,
-    account?: Account
+    content: Content;
+    author?: any;
+    account?: Account;
+    username?: string|undefined;
+    singlePost?: boolean; // To check if we are seeing a single detail page
+    likedContent?: boolean;
+    ownContent?: boolean;
 }

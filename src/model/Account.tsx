@@ -20,4 +20,5 @@ export interface Account {
     unread?: number;
     error?: any;
     follows?: string[];
+    profile?: any;
 }
