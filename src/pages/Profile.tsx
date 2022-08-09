@@ -47,13 +47,16 @@ const Profile: React.FC<profileProps> = (props: profileProps) => {
 
     // need to add account refresh/update hook
 
+    let unmounted = false;
+    let axiosSource = axios.CancelToken.source();
+
     const loadAccount = async () => {
       const username = await getUserName();
 
       // Update only if we dont have account or account is changed
       if ((!currentState.currentAccount && username) || (currentState.currentAccount && currentState.currentAccount.name !== username)) {
         breej.getAccount(username, async function (error: any, account: Account) {
-          if (account) {
+          if (account && !unmounted) {
             let blogContentStateData = {};
             let likedContentStateData = {};
             likedContentStateData = await loadLikedContent(account.name!);
@@ -65,7 +68,7 @@ const Profile: React.FC<profileProps> = (props: profileProps) => {
     }
 
     const loadLikedContent = async (username: string) => {
-      const likesAPI = await axios.get(`${API}/votes/${username}`);
+      const likesAPI = await axios.get(`${API}/votes/${username}`, {cancelToken: axiosSource.token, timeout: 1000 });
       if (likesAPI.status === 200) {
         const userApiPromises: any[] = [];
         for (let likedData of likesAPI.data) {
@@ -79,7 +82,7 @@ const Profile: React.FC<profileProps> = (props: profileProps) => {
     }
 
     const loadBlogContent = async (username: string) => {
-      let blogAPI = await axios.get(`${API}/blog/${username}`);
+      let blogAPI = await axios.get(`${API}/blog/${username}`, {cancelToken: axiosSource.token, timeout: 1000 });
       if (blogAPI.status === 200) {
         return { content: blogAPI.data, contentLoaded: true }
       } else {
@@ -102,6 +105,12 @@ const Profile: React.FC<profileProps> = (props: profileProps) => {
     }
 
     if(props.globalLoginStatus) loadAccount();
+
+    return function () {
+      unmounted = true;
+      axiosSource.cancel("Cancelling in cleanup");
+  };
+
   }, [currentState, props.globalLoginStatus]);
 
   const formattedCreatedDate = (dateTimeStamp: any) => {

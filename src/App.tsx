@@ -54,7 +54,7 @@ const App: React.FC = () => {
       setUserLoggedInStatus(status);
     }
 
-    if(!userLoggedIn) checkLogin()
+    if (!userLoggedIn) checkLogin()
 
   }, [userLoggedIn])
 
@@ -63,10 +63,10 @@ const App: React.FC = () => {
       <IonReactRouter>
         <IonTabs>
           <IonRouterOutlet>
-            <Route exact path="/feed">
+            <Route path="/feed">
               <Feed />
             </Route>
-            <Route exact path="/notifications">
+            <Route path="/notifications">
               <Notifications />
             </Route>
             <Route path="/wallet">
@@ -90,9 +90,7 @@ const App: React.FC = () => {
             <Route path="/singlepost">
               <SinglePostPage />
             </Route>
-            <Route exact path="/">
-              <Redirect to="/feed" />
-            </Route>
+            <Route path="/" render={() => <Redirect to="/feed" />} exact={true} />
 
           </IonRouterOutlet>
           <IonTabBar slot="bottom">
