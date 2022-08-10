@@ -17,6 +17,9 @@ import Trends from './pages/Trends';
 import Profile from './pages/Profile';
 import More from './pages/More';
 
+/* Main css style file*/
+import './index.css';
+
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
 
@@ -35,7 +38,6 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
-import './index.css';
 import { useEffect, useState } from 'react';
 import { checkLoginStatus } from './data/IonicStorage';
 import SignUpPage from './pages/SignUp';

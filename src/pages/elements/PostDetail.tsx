@@ -1,5 +1,5 @@
-import { IonCard,IonCardHeader, IonRow, IonCol, IonItem, IonAvatar, IonImg, IonLabel, IonCardTitle, IonCardContent, IonText, IonButton, IonIcon, IonChip, IonTitle, IonItemDivider } from "@ionic/react";
-import { personCircleOutline, time } from "ionicons/icons";
+import { IonCard,IonCardHeader, IonRow, IonCol, IonItem, IonAvatar, IonImg, IonCardTitle, IonCardContent, IonText, IonButton, IonIcon, } from "@ionic/react";
+import { personCircleOutline } from "ionicons/icons";
 import like from '../../images/icons/like.svg'
 import liked from '../../images/icons/liked.svg'
 import moment from "moment";
@@ -46,33 +46,30 @@ const PostDetail: React.FC<PostDetailProp> = (prop: PostDetailProp) => {
         <IonCard>
             <IonCardHeader>
                 {content.__promoted && (
-                    <IonRow>
-                        <IonCol className="ion-text-center">
-                            <IonTitle color="primary">
-                                <IonIcon color="primary" size="small" icon={promotedIcon} />Promoted
-                            </IonTitle>
-                            <IonItemDivider />
+                    <IonRow className="ion-justify-content-start ion-align-items-baseline">
+                        <IonCol>
+                            <IonText color="primary">
+                                <IonIcon  size="small" icon={promotedIcon} />Promoted
+                            </IonText>
                         </IonCol>
                     </IonRow>
                 )}
                 <IonRow>
                     <IonCol>
                         <IonItem>
-                            <IonAvatar slot="start">
+                            <IonAvatar >
                                 {profileImageSrc.length > 0 ? (
-                                    <IonImg src={profileImageSrc} />
+                                    <IonImg className="ion-icon" src={profileImageSrc} />
                                 ) : (
                                     <IonIcon className="ion-icon" icon={personCircleOutline} />
                                 )}
                             </IonAvatar>
-                            <IonText>
-                                <small>
-                                    <b>@{content.author}</b> in <b className="category-color ion-text-primary ion-text-uppercase">{content.json.category}</b> <br />
-                                    <IonChip outline color="primary">
-                                        <IonIcon icon={time}></IonIcon>
-                                        <IonLabel>{moment.utc(content.ts).fromNow()}</IonLabel>
-                                    </IonChip>
-                                </small>
+                            <IonText className="smallText">
+                                    <b>@{content.author} </b>
+                                    in &nbsp;
+                                    <b className="category-color ion-text-primary ion-text-capitalize">{content.json.category}</b> 
+                                    <b className="greyColor">&nbsp;•&nbsp;</b>
+                                    {moment.utc(content.ts).fromNow()}  
                             </IonText>
                         </IonItem>
                     </IonCol>
@@ -86,14 +83,17 @@ const PostDetail: React.FC<PostDetailProp> = (prop: PostDetailProp) => {
             <IonCardContent>
                 <IonRow>
                     <IonCol onClick={() => goToPostDetailPage(content)}>
-                        <IonText>
-                            <div dangerouslySetInnerHTML={{ __html: content.json.body! }} /></IonText>
+                        <IonText color="dark">
+                            <div dangerouslySetInnerHTML={{ __html: content.json.body! }} />
+                        </IonText>
+                        <br/>
                         {content.json.tags ? (
                             <IonText color="primary">
                                 {content.json.tags.map((tag: string, index: number) => {
-                                    return (<b key={index}>#{tag}</b>)
+                                    return (<span key={index}>#{tag}&nbsp;</span>)
                                 })}
                             </IonText>
+                           
                         ) : (<></>)}
                         {content.json && content.json.image && (
                             <IonImg className="img-radius" src={content.json.image} />
@@ -101,21 +101,21 @@ const PostDetail: React.FC<PostDetailProp> = (prop: PostDetailProp) => {
                 </IonRow>
                 <IonRow>
                     <IonCol >
-                        <IonButton color="#fff">
+                        <IonButton fill="clear" color="#fff">
                                  {ownContent && (
-                                <><IonIcon slot="icon-only" icon={like}/>&nbsp;<IonText color="dark">{content.likes}</IonText> </>
+                                <><IonIcon slot="icon-only"  icon={like}/>&nbsp;<IonText color="dark">{content.likes}</IonText> </>
                                 )}
                                 {likedContent && (
-                                    <><IonIcon slot="icon-only" icon={liked} />&nbsp; <IonText color="dark">{content.likes}</IonText></>
+                                    <><IonIcon slot="icon-only"  icon={liked} />&nbsp; <IonText color="dark">{content.likes}</IonText></>
                                 )}
                                 {!ownContent && !likedContent && (
                                     <><IonIcon slot="icon-only" icon={myVote ? liked : like}
-                                    color="danger" /> &nbsp;<IonText color="dark">{content.likes}</IonText></>
+                                    color="dark" /> &nbsp;<IonText color="dark">{content.likes}</IonText></>
                                 )}
                         </IonButton>
                     </IonCol>
                     <IonCol >
-                        <IonButton color="#fff">
+                        <IonButton fill="clear" color="#fff">
                            <IonText color="dark">{content.dist ? (content.dist / 1000000) : 0} TMAC</IonText> 
                         </IonButton>
                     </IonCol>

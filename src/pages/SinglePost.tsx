@@ -1,4 +1,4 @@
-import { IonButton, IonCol, IonContent, IonIcon, IonLoading, IonPage, IonRow } from "@ionic/react"
+import { IonButton, IonCol, IonContent, IonIcon, IonLoading, IonPage, IonRow,IonText } from "@ionic/react"
 import { arrowBack } from "ionicons/icons"
 import { useEffect, useState } from "react"
 import { useHistory, useLocation } from "react-router"
@@ -38,17 +38,18 @@ const SinglePostPage: React.FC = (props) => {
             <IonContent fullscreen>
                 {currentState.contentLoaded ? (
                     <>
+                        <IonRow className="ion-justify-content-start">
+                            <IonCol>
+                                <IonButton fill="clear" color="#fff" onClick={() => history.goBack()}>
+                                    <IonIcon color="primary" slot="icon-only" icon={arrowBack} /><IonText color="dark">Post</IonText></IonButton>
+                            </IonCol>
+                        </IonRow>
                         <IonRow>
                             <IonCol size="12">
                                 <PostDetail username={currentState.loggedInUsername} singlePost={true} content={currentState.content} />
                             </IonCol>
                         </IonRow>
-                        <IonRow>
-                            <IonCol className="ion-text-center">
-                                <IonButton fill="outline" onClick={() => history.goBack()} color="primary">
-                                    <IonIcon color="tertiary" slot="icon-only" icon={arrowBack} />Back</IonButton>
-                            </IonCol>
-                        </IonRow>
+                        
                     </>
                 ) : (
                     <IonLoading
