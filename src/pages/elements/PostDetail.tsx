@@ -1,5 +1,7 @@
-import { IonCard, IonCardHeader, IonRow, IonCol, IonItem, IonAvatar, IonImg, IonLabel, IonCardTitle, IonCardContent, IonText, IonButton, IonIcon, IonChip, IonTitle, IonItemDivider } from "@ionic/react";
-import { heart, heartOutline, person, time, walletOutline } from "ionicons/icons";
+import { IonCard,IonCardHeader, IonRow, IonCol, IonItem, IonAvatar, IonImg, IonLabel, IonCardTitle, IonCardContent, IonText, IonButton, IonIcon, IonChip, IonTitle, IonItemDivider } from "@ionic/react";
+import { personCircleOutline, time } from "ionicons/icons";
+import like from '../../images/icons/like.svg'
+import liked from '../../images/icons/liked.svg'
 import moment from "moment";
 import { useHistory } from "react-router-dom";
 import { PostDetailProp } from "../../model";
@@ -60,14 +62,17 @@ const PostDetail: React.FC<PostDetailProp> = (prop: PostDetailProp) => {
                                 {profileImageSrc.length > 0 ? (
                                     <IonImg src={profileImageSrc} />
                                 ) : (
-                                    <IonIcon size="large" icon={person} />
+                                    <IonIcon className="ion-icon" icon={personCircleOutline} />
                                 )}
                             </IonAvatar>
-                            <IonText><b>@{content.author}</b> in <b className="category-color ion-text-primary ion-text-uppercase">{content.json.category}</b> <br />
-                                <IonChip outline color="primary">
-                                    <IonIcon icon={time}></IonIcon>
-                                    <IonLabel>{moment.utc(content.ts).fromNow()}</IonLabel>
-                                </IonChip>
+                            <IonText>
+                                <small>
+                                    <b>@{content.author}</b> in <b className="category-color ion-text-primary ion-text-uppercase">{content.json.category}</b> <br />
+                                    <IonChip outline color="primary">
+                                        <IonIcon icon={time}></IonIcon>
+                                        <IonLabel>{moment.utc(content.ts).fromNow()}</IonLabel>
+                                    </IonChip>
+                                </small>
                             </IonText>
                         </IonItem>
                     </IonCol>
@@ -91,27 +96,27 @@ const PostDetail: React.FC<PostDetailProp> = (prop: PostDetailProp) => {
                             </IonText>
                         ) : (<></>)}
                         {content.json && content.json.image && (
-                            <IonImg src={content.json.image} />
+                            <IonImg className="img-radius" src={content.json.image} />
                         )}</IonCol>
                 </IonRow>
                 <IonRow>
-                    <IonCol>
-                        <IonButton>
-                            {ownContent && (
-                                <><IonIcon slot="icon-only" icon={heartOutline} color="danger" />&nbsp; {content.likes}</>
-                            )}
-                            {likedContent && (
-                                <><IonIcon slot="icon-only" icon={heart} color="danger" />&nbsp; {content.likes}</>
-                            )}
-                            {!ownContent && !likedContent && (
-                                <><IonIcon slot="icon-only" icon={myVote ? heart : heartOutline}
-                                color="danger" /> &nbsp;{content.likes}</>
-                            )}
+                    <IonCol >
+                        <IonButton color="#fff">
+                                 {ownContent && (
+                                <><IonIcon slot="icon-only" icon={like}/>&nbsp;<IonText color="dark">{content.likes}</IonText> </>
+                                )}
+                                {likedContent && (
+                                    <><IonIcon slot="icon-only" icon={liked} />&nbsp; <IonText color="dark">{content.likes}</IonText></>
+                                )}
+                                {!ownContent && !likedContent && (
+                                    <><IonIcon slot="icon-only" icon={myVote ? liked : like}
+                                    color="danger" /> &nbsp;<IonText color="dark">{content.likes}</IonText></>
+                                )}
                         </IonButton>
                     </IonCol>
-                    <IonCol>
-                        <IonButton>
-                            <IonIcon slot="icon-only" icon={walletOutline} /> &nbsp;{content.dist ? (content.dist / 1000000) : 0} TMAC
+                    <IonCol >
+                        <IonButton color="#fff">
+                           <IonText color="dark">{content.dist ? (content.dist / 1000000) : 0} TMAC</IonText> 
                         </IonButton>
                     </IonCol>
                 </IonRow>

@@ -35,6 +35,7 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import './index.css';
 import { useEffect, useState } from 'react';
 import { checkLoginStatus } from './data/IonicStorage';
 import SignUpPage from './pages/SignUp';

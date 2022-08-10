@@ -1,3 +1,14 @@
 .category-color {
     color: #3880ff;
 }
+
+.img-radius{
+    border-radius: 15px !important;
+    overflow: hidden;
+}
+
+
+.ion-icon{
+    font-size: 52px;
+}
+
