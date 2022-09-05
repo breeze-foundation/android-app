@@ -1,4 +1,4 @@
-import { IonCol, IonContent, IonLoading, IonPage, IonRow } from '@ionic/react';
+import { IonCol, IonContent, IonLoading, IonPage, IonRefresher, IonRefresherContent, IonRow, RefresherEventDetail } from '@ionic/react';
 import axios from 'axios';
 import { API } from '../data/ApiLinks';
 import moment from 'moment';
@@ -8,6 +8,7 @@ import { checkLoginStatus, getUserName } from '../data/IonicStorage';
 // import getTags from '../data/tags';
 import { Content } from '../model';
 import PostDetail from './elements/PostDetail';
+import { chevronDownCircleOutline } from 'ionicons/icons';
 
 //now imported as a component
 //const API = process.env.API_URL || 'https://api.breezechain.org';
@@ -20,10 +21,10 @@ interface feedProps {
 const Feed: React.FC<feedProps> = (props: feedProps) => {
 
   const [currentState, setCurrentState] = useState<any>({
-    feedPosts: undefined, 
-    dataLoaded: false, 
-    loggedInUsername: undefined, 
-    currentAccount: undefined, 
+    feedPosts: undefined,
+    dataLoaded: false,
+    loggedInUsername: undefined,
+    currentAccount: undefined,
     currentLoggedInStatus: false,
     feedType: 'public'
   });
@@ -78,6 +79,15 @@ const Feed: React.FC<feedProps> = (props: feedProps) => {
     setCurrentState({feedPosts: _finalData, dataLoaded: true, loggedInUsername: undefined, currentAccount: undefined, currentLoggedInStatus: false, feedType: 'public'});
   }
 
+  const doRefresh = async (event: CustomEvent<RefresherEventDetail>) => {
+
+    setCurrentState({ feedPosts: [], dataLoaded: false});
+  
+    setTimeout(() => {
+      event.detail.complete();
+    }, 1800);
+  }
+
   useEffect(() => {
     const checkLogin = async () => {
       const loginStatus = await checkLoginStatus();
@@ -109,6 +119,14 @@ const Feed: React.FC<feedProps> = (props: feedProps) => {
     <IonPage>
       <AppHeader />
       <IonContent fullscreen>
+        <IonRefresher pullFactor={2} pullMin={100} pullMax={200} slot="fixed" onIonRefresh={doRefresh}>
+          <IonRefresherContent
+            pullingIcon={chevronDownCircleOutline}
+            pullingText="Load new posts"
+            refreshingSpinner="circles"
+            refreshingText="Updating...">
+          </IonRefresherContent>
+        </IonRefresher>
         {currentState.dataLoaded ? (
           <IonRow>
             {currentState.dataLoaded && currentState.feedPosts.map((content: Content, index: number) => {
