@@ -1,5 +1,6 @@
 import { IonCol, IonContent, IonLoading, IonPage, IonRow } from '@ionic/react';
 import axios from 'axios';
+import { API } from '../data/ApiLinks';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import AppHeader from '../components/AppHeader';
@@ -8,7 +9,8 @@ import { checkLoginStatus, getUserName } from '../data/IonicStorage';
 import { Content } from '../model';
 import PostDetail from './elements/PostDetail';
 
-const API = process.env.API_URL || 'https://api.breezechain.org';
+//now imported as a component
+//const API = process.env.API_URL || 'https://api.breezechain.org';
 
 interface feedProps {
   // setLoginStatusGlobal?: any
