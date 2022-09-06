@@ -87,13 +87,13 @@ const Notifications: React.FC = () => {
                 linkDetails = <>{res.sender} updated profile {hashed}</>
               }
               if(res.type===14){
-                linkDetails = <>{res.sender} transferred {res.data.amount} VP to {res.data.receiver} {hashed}</>
+                linkDetails = <>@{res.sender} transferred {res.data.amount} VP to @{res.data.receiver} {hashed}</>
 
                 
               }
               if(res.type===15){
                 
-                linkDetails = <>{res.sender} transferred {res.data.amount} bytes to {res.data.receiver} {hashed}</>
+                linkDetails = <>@{res.sender} transferred {res.data.amount} bytes to @{res.data.receiver} {hashed}</>
                 
               }
 
@@ -101,7 +101,7 @@ const Notifications: React.FC = () => {
                 linkDetails = <>{res.sender} checked notifications {hashed}</>
               }
               return(
-                <IonItem color="#00aeff" key={res.ts}>{linkDetails}</IonItem>
+                <IonItem  key={res.ts}>{linkDetails}</IonItem>
               )
             })}
          </IonList>
