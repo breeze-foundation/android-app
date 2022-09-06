@@ -22,6 +22,10 @@ const PostDetail: React.FC<PostDetailProp> = (prop: PostDetailProp) => {
         }
     }
 
+    const handleImageError = (e: any) => {
+        e.target.src = 'https://placeholder.pics/svg/300';
+    }
+
     const promotedIcon = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' class='ionicon' viewBox='0 0 30 30'><title>Promoted</title><path d='M 5 5 L 5 27 L 27 27 L 27 5 Z M 7 7 L 25 7 L 25 25 L 7 25 Z M 13 10 L 13 12 L 18.5625 12 L 9.28125 21.28125 L 10.71875 22.71875 L 20 13.4375 L 20 19 L 22 19 L 22 10 Z' /></svg>"
 
     let profileImageSrc = '';
@@ -96,7 +100,9 @@ const PostDetail: React.FC<PostDetailProp> = (prop: PostDetailProp) => {
                            
                         ) : (<></>)}
                         {content.json && content.json.image && (
-                            <IonImg className="img-radius" src={content.json.image} />
+                            <IonImg
+                            onError={handleImageError}
+                            className="img-radius" src={content.json.image} />
                         )}</IonCol>
                 </IonRow>
                 <IonRow>
