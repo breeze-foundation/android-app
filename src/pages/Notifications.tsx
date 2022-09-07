@@ -5,7 +5,7 @@ import { checkLoginStatus, getUserName } from '../data/IonicStorage';
 import axios from 'axios';
 import AppHeader from '../components/AppHeader';
 
-
+//not complete, do not edit code until completed
 const Notifications: React.FC = () => {
   
   const [notificationData,setNotificationData] = useState<any>([])
