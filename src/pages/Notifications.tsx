@@ -8,7 +8,7 @@ import AppHeader from '../components/AppHeader';
 
 //not complete, do not edit code until completed
 const Notifications: React.FC = () => {
-  
+  const [user,setUser] = useState<string>("");
   const [notificationData,setNotificationData] = useState<any>([])
   const [linkHash, setLinkHash] = useState<string>("")
     
@@ -16,22 +16,34 @@ const Notifications: React.FC = () => {
   
   const getNotifications= (username:string) => {
     if(username !== ""){
-    axios.get(`${API}/history/${username}/0`).then((res)=>{
-      if(res.status === 200) {
-        setNotificationData(res.data)
-        console.log(res.data)
-      }else{
-        //resolve errors
-        console.log("Not A complete error")
-      }
-    }).catch((error)=>{
-      console.log(error)
-    })
+      axios.get(`${API}/history/${username}/0`).then((res)=>{
+        if(res.status === 200) {
+          setNotificationData(res.data)
+          setUser(username)
+          console.log(res.data)
+        }else{
+          //resolve errors
+          console.log("Not A complete error")
+        }
+      }).catch((error)=>{
+        console.log(error)
+      })
+    }
   }
 
   //To add mark as read function
   const MarkAsRead=()=>{
-
+    if(user !== ""){
+      axios.get(`${API}/unreadnotifycount/${user}`).then((res)=>{
+        if(res.status === 200) {
+          console.log(res)
+        }else{
+          //resolve errors
+          console.log("Not A complete error")
+        }
+      }).catch((error)=>{
+        console.log(error)
+      })
   }
     
   }
@@ -71,7 +83,7 @@ const Notifications: React.FC = () => {
           </IonRow>
           <IonRow >
             <IonCol class='ion-text-center'>
-              <IonButton>Mark all as read</IonButton>
+              <IonButton onClick={() => MarkAsRead()}>Mark all as read</IonButton>
             </IonCol>
           </IonRow>
         </IonGrid>
