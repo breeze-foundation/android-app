@@ -1,7 +1,8 @@
-import { IonContent, IonPage,IonList,IonItem, IonBadge,IonLabel } from '@ionic/react';
+import { IonContent, IonPage,IonList,IonItem, IonBadge,IonLabel, IonGrid, IonRow, IonCol, IonButton, IonText } from '@ionic/react';
 import { API } from '../data/ApiLinks';
 import { useState,useEffect } from 'react';
 import { checkLoginStatus, getUserName } from '../data/IonicStorage';
+import GoBack from '../components/BackButton';
 import axios from 'axios';
 import AppHeader from '../components/AppHeader';
 
@@ -26,6 +27,11 @@ const Notifications: React.FC = () => {
     }).catch((error)=>{
       console.log(error)
     })
+  }
+
+  //To add mark as read function
+  const MarkAsRead=()=>{
+
   }
     
   }
@@ -53,6 +59,23 @@ const Notifications: React.FC = () => {
     <IonPage>
       <AppHeader/>
       <IonContent fullscreen>
+        <IonItem>
+          {GoBack("Notifications")}
+        </IonItem>
+        <IonGrid>
+          <IonRow class="ion-text-center">
+            <IonCol>
+              <IonText color="primary" className='text-center'>Activity</IonText>
+            </IonCol>
+            
+          </IonRow>
+          <IonRow >
+            <IonCol class='ion-text-center'>
+              <IonButton>Mark all as read</IonButton>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
+           
         <IonList>
             {notificationData.map((res:any)=>{
               //check if we need to view link details
