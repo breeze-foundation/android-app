@@ -125,29 +125,29 @@ const Notifications: React.FC = () => {
 
               //change types to specific words
               if(res.type===4){
-                linkDetails = <>{res.sender} shared new post @{res.data.author}/{res.data.link} {hashed}</>
+                linkDetails = <IonText><a>@{res.sender}</a> shared new post <a>@{res.data.author}/{res.data.link}</a> {hashed}</IonText>
               }
               if(res.type===5){
-                linkDetails = <>{res.sender} upvoted @{res.data.author}/{res.data.link} {hashed}</>
+                linkDetails = <IonText><a>@{res.sender}</a> upvoted <a>@{res.data.author}/{res.data.link}</a> {hashed}</IonText>
                 
               }
               if(res.type===6){
                 // res.type="updated profile"
-                linkDetails = <>{res.sender} updated profile {hashed}</>
+                linkDetails = <IonText><a>@{res.sender}</a> updated profile {hashed}</IonText>
               }
               if(res.type===14){
-                linkDetails = <>@{res.sender} transferred {res.data.amount} VP to @{res.data.receiver} {hashed}</>
+                linkDetails = <IonText><a>@{res.sender}</a> transferred {res.data.amount} VP to <a>@{res.data.receiver}</a> {hashed}</IonText>
 
                 
               }
               if(res.type===15){
                 
-                linkDetails = <>@{res.sender} transferred {res.data.amount} bytes to @{res.data.receiver} {hashed}</>
+                linkDetails = <IonText><a>@{res.sender}</a> transferred {res.data.amount} bytes to <a>@{res.data.receiver}</a> {hashed}</IonText>
                 
               }
 
               if(res.type===28){
-                linkDetails = <>{res.sender} checked notifications {hashed}</>
+                linkDetails = <IonText><a>@{res.sender}</a> checked notifications {hashed}</IonText>
               }
               return(
                 <IonItem  key={res.ts}>{linkDetails}</IonItem>
