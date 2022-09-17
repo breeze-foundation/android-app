@@ -1,4 +1,4 @@
-import { IonContent, IonPage,IonList,IonItem, IonBadge,IonLabel, IonGrid, IonRow, IonCol, IonButton, IonText } from '@ionic/react';
+import { IonContent, IonPage,IonList,IonItem, IonBadge,IonLabel, IonGrid, IonRow, IonCol, IonButton, IonText, IonToast } from '@ionic/react';
 import { API } from '../data/ApiLinks';
 import { useState,useEffect } from 'react';
 import { checkLoginStatus, getUserName } from '../data/IonicStorage';
@@ -10,7 +10,9 @@ import AppHeader from '../components/AppHeader';
 const Notifications: React.FC = () => {
   const [user,setUser] = useState<string>("");
   const [notificationData,setNotificationData] = useState<any>([])
-  const [linkHash, setLinkHash] = useState<string>("")
+  const [readText,setReadText] = useState<string>("Mark As Read")
+  const [toast,setToast] = useState<boolean>(false)
+  const [toastText,setToastText] = useState<string>("Marked all as Read")
     
   
   
@@ -21,7 +23,7 @@ const Notifications: React.FC = () => {
           setNotificationData(res.data)
           setUser(username)
           console.log(res.data)
-        }else{
+        }else {
           //resolve errors
           console.log("Not A complete error")
         }
@@ -33,14 +35,19 @@ const Notifications: React.FC = () => {
 
   //To add mark as read function
   const MarkAsRead=()=>{
+    setReadText("Marking...")
     if(user !== ""){
       axios.get(`${API}/unreadnotifycount/${user}`).then((res)=>{
-        if(res.status === 200) {
-          console.log(res)
-        }else{
-          //resolve errors
-          console.log("Not A complete error")
+        if(res.status === 200 && res.data.count===0) {
+          setToastText("No unread notifications")
+          setToast(true)
+          setReadText("Mark As Read")
+        }else if(res.status === 200 && res.data.count<0){
+          setToastText("Marked as read")
+          setToast(true)
+          setReadText("Mark As Read")
         }
+        
       }).catch((error)=>{
         console.log(error)
       })
@@ -83,7 +90,7 @@ const Notifications: React.FC = () => {
           </IonRow>
           <IonRow >
             <IonCol class='ion-text-center'>
-              <IonButton onClick={() => MarkAsRead()}>Mark all as read</IonButton>
+              <IonButton onClick={() => MarkAsRead()}>{readText}</IonButton>
             </IonCol>
           </IonRow>
         </IonGrid>
@@ -140,6 +147,12 @@ const Notifications: React.FC = () => {
               )
             })}
          </IonList>
+         <IonToast  isOpen={toast} 
+                    position="top"
+                    message={toastText}
+                    onDidDismiss={()=>setToast(false)}
+                    buttons={["OK"]}
+          />
       </IonContent>
     </IonPage>
   );
