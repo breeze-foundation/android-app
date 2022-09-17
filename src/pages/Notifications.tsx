@@ -47,9 +47,16 @@ const Notifications: React.FC = () => {
           setToast(true)
           setReadText("Mark As Read")
         }
+        else{
+          setToastText(":( cant process your request, try again later")
+          setToast(true)
+          setReadText("Mark As Read")
+        }
         
       }).catch((error)=>{
-        console.log(error)
+        setToastText(":( cant process your request, try again later")
+        setToast(true)
+        setReadText("Mark As Read")
       })
   }
     
