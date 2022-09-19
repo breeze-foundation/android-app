@@ -1,5 +1,5 @@
 import { IonContent, IonPage,IonList,IonItem, IonBadge,IonLabel, IonGrid, IonRow, IonCol, IonButton, IonText, IonToast } from '@ionic/react';
-import { API } from '../data/ApiLinks';
+import { API, BreezeSite } from '../data/ApiLinks';
 import { useState,useEffect } from 'react';
 import { checkLoginStatus, getUserName } from '../data/IonicStorage';
 import GoBack from '../components/BackButton';
@@ -118,9 +118,9 @@ const Notifications: React.FC = () => {
               
               if (res.hash !== ""){
                 hashed = res.hash;
-                hashed = <IonBadge onClick={()=>{
+                hashed = <a href={BreezeSite+res.hash} target="_blank"><IonBadge onClick={()=>{
 
-                }}> {hashed.slice(0,6)}</IonBadge>
+                }}> {hashed.slice(0,6)}</IonBadge></a>
               }
 
               //change types to specific words
