@@ -85,9 +85,9 @@ const Notifications: React.FC = () => {
     <IonPage>
       <AppHeader/>
       <IonContent fullscreen>
-        <IonItem>
+        
           {GoBack("Notifications")}
-        </IonItem>
+        <hr/>
         <IonGrid>
           <IonRow class="ion-text-center">
             <IonCol>
