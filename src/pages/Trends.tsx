@@ -1,4 +1,4 @@
-import { IonContent, IonPage } from '@ionic/react';
+import { IonContent, IonPage, IonText } from '@ionic/react';
 import AppHeader from '../components/AppHeader';
 import goBack  from '../components/BackButton';
 
@@ -10,6 +10,12 @@ const Trends: React.FC = () => {
       <IonContent fullscreen>
       {goBack("Explore")} 
         <hr/>
+        IonCon
+      
+          <IonText>
+            <h5>Trends</h5>
+          </IonText>
+         
         
       </IonContent>
     </IonPage>
